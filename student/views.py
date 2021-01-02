@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,HttpResponse
+import requests
 
-# Create your views here.
+def current_datetime(request):
+    return HttpResponse()
+
+def index(request):
+    return render(request,'Index.html')

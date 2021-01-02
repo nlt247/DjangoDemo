@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.html import format_html
+import datetime
 
 class Account(models.Model):
     '''账户表'''
@@ -16,6 +18,10 @@ class Account(models.Model):
     def __str__(self):
         return self.username
 
+    class Meta:
+        #verbose_name = '用户'
+        verbose_name_plural = '用户'
+
 class Aritcle(models.Model):
     '''文章表'''
     title = models.CharField(max_length=255,unique=True)
@@ -26,7 +32,15 @@ class Aritcle(models.Model):
     #SET_DEFAULT 默认给指定用户
     account = models.ForeignKey('Account',on_delete=models.CASCADE)
     tags = models.ManyToManyField('Tag',null=True,blank=True)
-    pub_date = models.DateTimeField()
+    pub_date = models.DateTimeField(default=datetime.datetime.now())
+    read_count = models.CharField(max_length=255,null=True)
+
+    def get_tags(self):
+        names = ','.join([i.name for i in self.tags.all()])
+        return format_html('<span style="color:red;" >{}</span>',names)
+
+    def get_comment(self):
+        return 10
 
     def __str__(self):
         return '%s - %s' % (self.id, self.title)
@@ -35,3 +49,6 @@ class Tag(models.Model):
     '''标签表'''
     name = models.CharField(max_length=64,unique=True)
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
